@@ -1,9 +1,9 @@
-require 'vagrant-plugin-phpstorm-tunnel/configurator'
+require 'vagrant-phpstorm-tunnel/configurator'
 
 module VagrantPhpStormTunnel
   class Plugin < Vagrant.plugin("2")
 
-    name "vagrant-plugin-phpstorm-tunnel"
+    name "vagrant-phpstorm-tunnel"
 
     %w{up provision}.each do |action|
       action_hook(:restart_host_dns, "machine_action_#{action}".to_sym) do |hook|

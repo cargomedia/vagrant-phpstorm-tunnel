@@ -1,4 +1,4 @@
-Vagrant.require_plugin "vagrant-plugin-phpstorm-tunnel"
+Vagrant.require_plugin "vagrant-phpstorm-tunnel"
 
 Vagrant.configure("2") do |config|
   config.vm.box = 'debian-6-amd64'
