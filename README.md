@@ -20,3 +20,6 @@ end
 ## PhpStorm
 
 `vagrant-phpstorm-tunnel` will create file `php` in location `./scripts/vagrant/php` relative to `Vagrantfile`. You should configure you `PHP` interpreter by navigate to folder `<path-to-project>/scripts/vagrant`.
+
+## Known issues
+* `./scripts/vagrant/php` has wrong permissions. Should be executable. You can change it by navigating to your project and `chmod +x scripts/vagrant/php`.
