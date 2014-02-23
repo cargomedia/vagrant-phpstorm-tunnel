@@ -1,12 +1,13 @@
 require 'fileutils'
 
-module VagrantPhpStormTunnel
+module VagrantPhpstormTunnel
   class Configurator
     def initialize(app, env)
       @app = app
       @env = env
 
       @root_path = @env[:root_path].to_s
+      @home_path = '.idea/vagrant'
     end
 
     def is_intellij
@@ -14,7 +15,7 @@ module VagrantPhpStormTunnel
     end
 
     def link_php_to_intellij
-      destination_path = @root_path + '/.idea/vagrant/php'
+      destination_path = File.join(@root_path, @home_path, 'php')
       source_path = File.expand_path('../../../data/php', __FILE__)
 
       if !File.exist? destination_path
@@ -28,11 +29,9 @@ module VagrantPhpStormTunnel
       @env = env
       @app.call(env)
 
-      if !is_intellij
-        raise "Cannot detect intellij environment at #{@root_path}"
+      if is_intellij
+        link_php_to_intellij
       end
-
-      link_php_to_intellij
     end
   end
 end
