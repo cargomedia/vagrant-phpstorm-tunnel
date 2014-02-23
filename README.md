@@ -1,25 +1,23 @@
 vagrant-phpstorm-tunnel
-==============================
+=======================
+`vagrant-phpstorm-tunnel` installs a proxy php binary which can be configured as a php-interpreter in [PhpStorm](http://www.jetbrains.com/phpstorm/).
+It will forward all php calls to `php` in the [Vagrant](http://www.vagrantup.com/) VM.
 
-`vagrant-phpstorm-tunnel` creates tunnel between [PHPStorm](http://www.jetbrains.com/phpstorm/) and [Vagrant](http://www.vagrantup.com/) machine to allow executing [PHP](http://php.net/) via [SSH](http://en.wikipedia.org/wiki/Secure_Shell)
+This is a workaround for a missing feature in PhpStorm (see http://youtrack.jetbrains.com/issue/WI-19485).
 
-## Installation
-
-    $ vagrant plugin install vagrant-phpstorm-tunnel
-
-## Vagrantfile
-
-```ruby
-Vagrant.require_plugin "vagrant-phpstorm-tunnel"
-
-Vagrant.configure("2") do |config|
-    #...
-end
+Installation
+------------
+```sh
+vagrant plugin install vagrant-phpstorm-tunnel
 ```
 
-## PhpStorm
+PhpStorm
+--------
+`vagrant-phpstorm-tunnel` will create a file `.idea/vagrant/php` in your vagrant-project.
+Select this file as a PHP interpreter in PhpStorm:
+![PhpStorm screenshot](docu/phpstorm-interpreter.png)
 
-`vagrant-phpstorm-tunnel` will create file `php` in location `./scripts/vagrant/php` relative to `Vagrantfile`. You should configure you `PHP` interpreter by navigate to folder `<path-to-project>/scripts/vagrant`.
-
-## Known issues
-* `./scripts/vagrant/php` has wrong permissions. Should be executable. You can change it by navigating to your project and `chmod +x scripts/vagrant/php`.
+Limitations
+-----------
+The plugin assumes your project is shared as `/vagrant` in the VM.
+It will copy PhpStorm's helper-scripts into `.idea/vagrant/tmp/` to make them accessible from within the VM.

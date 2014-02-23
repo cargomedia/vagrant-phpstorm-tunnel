@@ -1,54 +1,51 @@
-#!/usr/bin/env php 
+#!/usr/bin/env php
 <?php
 
-$scriptDir = __DIR__;
+$projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
+$projectDirGuest = '/vagrant';
+$homeDirHost = $projectDirHost . '/.idea/vagrant';
+$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
+$pipe = 'vagrant ssh -c ';
 
-$projectDir = '';
-$projectTmpDir = '/tmp';
+chdir($projectDirHost);
 
-$vagrantDir = '/vagrant';
-$vagrantIp = '10.10.10.1';
-
-$pathCrumbs = explode('/', $scriptDir);
-while(count($pathCrumbs)) {
-	$_path = implode('/', $pathCrumbs);
-	if(is_dir($_path . '/.idea')) {
-		$projectDir = $_path;
-		break;
-	}
-	array_pop($pathCrumbs);
+// Detect Host IP
+$hostIpFile = $homeDirHost . '/host_ip';
+if (!file_exists($hostIpFile)) {
+	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3 }\'"');
+	file_put_contents($hostIpFile, $ip);
+}
+$hostIp = trim(file_get_contents($hostIpFile));
+if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
+	throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
 }
 
-if (empty($projectDir)) {
-	echo "Cannot detect project dir!";
-	exit;
-}
 
-$args = $_SERVER['argv'];
-foreach ($args as $index => &$arg) {
-
+$arguments = $argv;
+array_shift($arguments);
+foreach ($arguments as $index => &$argument) {
 	// IP mapping
-	$arg = str_replace(array('127.0.0.1', 'localhost'), $vagrantIp, $arg);
+	$argument = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $argument);
 
 	// Paths mapping
-	$filePath = $arg;
+	$filePath = $argument;
 	if (file_exists($filePath)) {
-		if (strpos($filePath, $projectDir) !== false) {
+		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
-			$args[$index] = str_replace($projectDir, $vagrantDir, $filePath);
+			$arguments[$index] = str_replace($projectDirHost, $projectDirGuest, $filePath);
 		} else {
-			if (strpos($filePath, $projectDir) === false) {
-				// Mapping any other local system paths to remote paths, upload files
-				$basename = basename($filePath);
-				copy($filePath, $projectDir . $projectTmpDir . '/tunnel.' . $basename);
-				$args[$index] = $vagrantDir . $projectTmpDir . '/tunnel.' . $basename;
+			// Mapping any other local system paths to remote paths, upload files
+			if(!is_dir($homeDirHost . '/scripts/')) {
+				mkdir($homeDirHost . '/scripts/', 0777, true);
 			}
+			copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
+			$arguments[$index] = $homeDirGuest . '/scripts/' . basename($filePath);
 		}
 	}
 
-	$arg = escapeshellarg($arg);
+	$argument = escapeshellarg($argument);
 }
-array_shift($args);
+
 
 // Get XDEBUG environment variable
 $env = '';
@@ -56,15 +53,5 @@ if (isset($_SERVER['XDEBUG_CONFIG'])) {
 	$env = "XDEBUG_CONFIG='" . $_SERVER['XDEBUG_CONFIG'] . "'";
 }
 
-// Tunnel
-$pipe = 'vagrant ssh -c ';
 
-// Remote command
-$commandRemote = $env . ' php ' . implode(' ', $args);
-
-// Local command
-$commandLocal = 'cd ' . $projectDir . ' && ' . $pipe . '"' . $commandRemote . '"';
-passthru($commandLocal);
-
-exit;
-?>
+passthru($pipe . '"' . $env . ' php ' . implode(' ', $arguments) . '"');
