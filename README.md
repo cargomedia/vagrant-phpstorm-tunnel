@@ -1,6 +1,5 @@
 vagrant-phpstorm-tunnel
 =======================
-
 `vagrant-phpstorm-tunnel` installs a proxy php binary which can be configured as a php-interpreter in [PHPStorm](http://www.jetbrains.com/phpstorm/).
 It will forward all php calls to `php` in the [Vagrant](http://www.vagrantup.com/) VM.
 
