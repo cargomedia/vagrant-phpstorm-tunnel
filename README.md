@@ -16,3 +16,8 @@ PhpStorm
 `vagrant-phpstorm-tunnel` will create a file `.idea/vagrant/php` in your vagrant-project.
 Select this file as a PHP interpreter in PhpStorm:
 ![PhpStorm screenshot](docu/phpstorm-interpreter.png)
+
+Limitations
+-----------
+The plugin assumes your project is shared as `/vagrant` in the VM.
+It will copy PhpStorm's helper-scripts into `.idea/vagrant/tmp/` to make them accessible from within the VM.
