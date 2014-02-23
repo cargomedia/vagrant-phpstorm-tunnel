@@ -32,10 +32,12 @@ foreach ($arguments as $index => &$argument) {
 	if (file_exists($filePath)) {
 		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
-			$arguments[$index] = str_replace($projectDirHost, $vagrantDir, $filePath);
+			$arguments[$index] = str_replace($projectDirHost, $projectDirGuest, $filePath);
 		} else {
 			// Mapping any other local system paths to remote paths, upload files
-			mkdir($homeDirHost . '/scripts/', 0777, true);
+			if(!is_dir($homeDirHost . '/scripts/')) {
+				mkdir($homeDirHost . '/scripts/', 0777, true);
+			}
 			copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
 			$arguments[$index] = $homeDirGuest . '/scripts/' . basename($filePath);
 		}
