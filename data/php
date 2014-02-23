@@ -1,16 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-$projectDir = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
-$homeDir = $projectDir . '/.idea/vagrant';
-$tmpDir = $homeDir . '/tmp';
-$vagrantDir = '/vagrant';
+$projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
+$projectDirGuest = '/vagrant';
+$homeDirHost = $projectDirHost . '/.idea/vagrant';
+$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
 $pipe = 'vagrant ssh -c ';
 
-chdir($projectDir);
+chdir($projectDirHost);
 
 // Detect Host IP
-$hostIpFile = $homeDir . '/host_ip';
+$hostIpFile = $homeDirHost . '/host_ip';
 if (!file_exists($hostIpFile)) {
 	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3 }\'"');
 	file_put_contents($hostIpFile, $ip);
@@ -30,14 +30,14 @@ foreach ($arguments as $index => &$argument) {
 	// Paths mapping
 	$filePath = $argument;
 	if (file_exists($filePath)) {
-		if (strpos($filePath, $projectDir) !== false) {
+		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
-			$arguments[$index] = str_replace($projectDir, $vagrantDir, $filePath);
+			$arguments[$index] = str_replace($projectDirHost, $vagrantDir, $filePath);
 		} else {
 			// Mapping any other local system paths to remote paths, upload files
-			$basename = basename($filePath);
-			copy($filePath, $projectDir . '/' . $tmpDir . '/tunnel.' . $basename);
-			$arguments[$index] = $vagrantDir . '/' . $tmpDir . '/tunnel.' . $basename;
+			mkdir($homeDirHost . '/scripts/', 0777, true);
+			copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
+			$arguments[$index] = $homeDirGuest . '/scripts/' . basename($filePath);
 		}
 	}
 
