@@ -1,14 +1,21 @@
-#!/usr/bin/env php 
+#!/usr/bin/env php
 <?php
 
 $scriptDir = __DIR__;
 
 $projectDir = '';
 $projectTmpDir = '/tmp';
-
 $vagrantDir = '/vagrant';
-$vagrantIp = '10.10.10.1';
 
+// Detect Host IP
+$hostIpFile = $scriptDir . '/host_ip';
+if(!file_exists($hostIpFile)) {
+	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3 }\'"');
+	file_put_contents($hostIpFile, $ip);
+}
+$hostIp = file_get_contents($hostIpFile);
+
+// Detect Project Dir
 $pathCrumbs = explode('/', $scriptDir);
 while(count($pathCrumbs)) {
 	$_path = implode('/', $pathCrumbs);
@@ -28,7 +35,7 @@ $args = $_SERVER['argv'];
 foreach ($args as $index => &$arg) {
 
 	// IP mapping
-	$arg = str_replace(array('127.0.0.1', 'localhost'), $vagrantIp, $arg);
+	$arg = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $arg);
 
 	// Paths mapping
 	$filePath = $arg;
