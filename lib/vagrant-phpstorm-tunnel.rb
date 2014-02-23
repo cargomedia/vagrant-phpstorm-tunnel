@@ -6,7 +6,7 @@ module VagrantPhpStormTunnel
     name "vagrant-phpstorm-tunnel"
 
     %w{up provision}.each do |action|
-      action_hook(:restart_host_dns, "machine_action_#{action}".to_sym) do |hook|
+      action_hook(:restart_host_tunnel, "machine_action_#{action}".to_sym) do |hook|
         hook.append VagrantPhpStormTunnel::Configurator
       end
     end
