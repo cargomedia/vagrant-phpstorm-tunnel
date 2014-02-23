@@ -18,11 +18,10 @@ module VagrantPhpstormTunnel
       destination_path = File.join(@root_path, @home_path, 'php')
       source_path = File.expand_path('../../../data/php', __FILE__)
 
-      if !File.exist? destination_path
-        FileUtils.mkdir_p(File.dirname(destination_path))
-        File.link(source_path, destination_path)
-        File.chmod(0755, destination_path)
-      end
+      FileUtils.rm_rf(@home_path)
+      FileUtils.mkdir_p(@home_path)
+      File.link(source_path, destination_path)
+      File.chmod(0755, destination_path)
     end
 
     def call(env)
