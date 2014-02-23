@@ -8,7 +8,9 @@ module VagrantPhpStormTunnel
     end
 
     def link_php_to_phpstorm
-      destination_path = Dir.getwd + '/scripts/vagrant/php'
+      vagrant_root_path = @env[:root_path].to_s
+
+      destination_path = vagrant_root_path + '/.idea/vagrant/php'
       source_path = File.expand_path('../../../data/php', __FILE__)
 
       if !File.exist? destination_path
