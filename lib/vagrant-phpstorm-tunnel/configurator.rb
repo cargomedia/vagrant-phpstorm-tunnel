@@ -13,13 +13,14 @@ module VagrantPhpStormTunnel
       File.exist? @root_path + '/.idea'
     end
 
-    def link_php_to_phpstorm
+    def link_php_to_intellij
       destination_path = @root_path + '/.idea/vagrant/php'
       source_path = File.expand_path('../../../data/php', __FILE__)
 
       if !File.exist? destination_path
         FileUtils.mkdir_p(File.dirname(destination_path))
         File.link(source_path, destination_path)
+        File.chmod(0755, destination_path)
       end
     end
 
@@ -31,7 +32,7 @@ module VagrantPhpStormTunnel
         raise "Cannot detect intellij environment at #{@root_path}"
       end
 
-      link_php_to_phpstorm
+      link_php_to_intellij
     end
   end
 end
