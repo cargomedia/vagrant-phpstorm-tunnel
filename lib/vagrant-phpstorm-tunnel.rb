@@ -5,7 +5,7 @@ module VagrantPhpstormTunnel
 
     name 'vagrant-phpstorm-tunnel'
 
-    %w{up provision}.each do |action|
+    %w{up provision reload}.each do |action|
       action_hook(:install_tunnel, "machine_action_#{action}".to_sym) do |hook|
         hook.append VagrantPhpstormTunnel::Configurator
       end
