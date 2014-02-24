@@ -17,7 +17,7 @@ PhpStorm
 Select this file as a PHP interpreter in PhpStorm:
 ![PhpStorm screenshot](docu/phpstorm-interpreter.png)
 Add PHP server for your project
-![PhpStorm screenshot](docu/phpstorm-server.png)
+![PhpStorm screenshot](docu/phpstorm-servers.png)
 
 VM
 --
