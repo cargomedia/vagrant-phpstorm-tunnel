@@ -14,8 +14,10 @@ vagrant plugin install vagrant-phpstorm-tunnel
 PhpStorm
 --------
 `vagrant-phpstorm-tunnel` will create a file `.idea/vagrant/php` in your vagrant-project.
+
 Select this file as a PHP interpreter in PhpStorm:
 ![PhpStorm screenshot](docu/phpstorm-interpreter.png)
+
 Add PHP server for your project
 ![PhpStorm screenshot](docu/phpstorm-servers.png)
 
