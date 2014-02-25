@@ -24,6 +24,7 @@ if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
 $projectDirGuestFile = $homeDirHost . '/vm_project_dir';
 if (file_exists($projectDirGuestFile)) {
   $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
+  $homeDirGuest = $projectDirGuest . '/.idea/vagrant';
 }
 
 $arguments = $argv;
