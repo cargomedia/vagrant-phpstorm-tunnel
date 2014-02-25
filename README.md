@@ -11,6 +11,16 @@ Installation
 vagrant plugin install vagrant-phpstorm-tunnel
 ```
 
+Vagrantfile
+-----------
+You can configure your `project_home` path within `vagrant` machine. This is needed for proper paths mapping from `PhpStorm` during debugging (please have a look also section below).
+```ruby
+Vagrant.configure('2') do |config|
+  (...)
+  config.phpstorm_tunnel.project_home = '/home/vagrant/fuboo'
+end
+```
+
 PhpStorm
 --------
 `vagrant-phpstorm-tunnel` will create a file `.idea/vagrant/php` in your vagrant-project.
