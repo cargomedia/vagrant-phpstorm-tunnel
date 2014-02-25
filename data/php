@@ -4,7 +4,6 @@
 $projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
 $projectDirGuest = '/vagrant';
 $homeDirHost = $projectDirHost . '/.idea/vagrant';
-$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
 $pipe = 'vagrant ssh -c ';
 
 chdir($projectDirHost);
@@ -25,6 +24,7 @@ $projectDirGuestFile = $homeDirHost . '/vm_project_dir';
 if (file_exists($projectDirGuestFile)) {
   $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
 }
+$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
 
 $arguments = $argv;
 array_shift($arguments);
