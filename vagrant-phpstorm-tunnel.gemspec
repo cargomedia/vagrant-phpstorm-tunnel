@@ -9,5 +9,5 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/cargomedia/vagrant-phpstorm-tunnel'
   s.license     = 'MIT'
 
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rake', '~> 0'
 end
