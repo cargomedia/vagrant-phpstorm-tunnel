@@ -13,7 +13,7 @@ vagrant plugin install vagrant-phpstorm-tunnel
 
 Vagrantfile
 -----------
-You can configure your `project_home` path within `vagrant` machine. This is needed for proper path mapping from `PhpStorm' during debugging (please have a look section below).
+You can configure your `project_home` path within `vagrant` machine. This is needed for proper paths mapping from `PhpStorm` during debugging (please have a look also section below).
 ```
 Vagrant.require_plugin 'vagrant-phpstorm-tunnel'
 
