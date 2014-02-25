@@ -30,7 +30,7 @@ module VagrantPhpstormTunnel
       FileUtils.mkdir_p(@home_path)
 
       if opts[:project_home]
-        destination_path = File.join(@root_path, @home_path, 'project_dir')
+        destination_path = File.join(@root_path, @home_path, 'vm_project_dir')
         File.write(destination_path, opts[:project_home].to_s, mode: 'a')
       end
     end

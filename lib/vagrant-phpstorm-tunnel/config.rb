@@ -9,7 +9,7 @@ module VagrantPhpstormTunnel
 
     def to_hash
       {
-          :project_home => project_home || 'vagrant'
+          :project_home => project_home
       }
     end
   end
