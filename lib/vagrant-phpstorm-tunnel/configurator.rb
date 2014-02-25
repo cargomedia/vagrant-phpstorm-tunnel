@@ -24,14 +24,12 @@ module VagrantPhpstormTunnel
     end
 
     def setup_environment
-      opts = tunnel_options
-
       FileUtils.rm_rf(@home_path)
       FileUtils.mkdir_p(@home_path)
 
-      if opts[:project_home]
+      if tunnel_options[:project_home]
         destination_path = File.join(@root_path, @home_path, 'vm_project_dir')
-        File.write(destination_path, opts[:project_home].to_s, mode: 'a')
+        File.write(destination_path, tunnel_options[:project_home].to_s, mode: 'a')
       end
     end
 
