@@ -20,6 +20,11 @@ if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
 	throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
 }
 
+// Detect Project Dir on Guest
+$projectDirGuestFile = $homeDirHost . '/vm_project_dir';
+if (file_exists($projectDirGuestFile)) {
+  $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
+}
 
 $arguments = $argv;
 array_shift($arguments);
