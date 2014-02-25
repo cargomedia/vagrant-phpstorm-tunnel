@@ -15,7 +15,10 @@ Vagrantfile
 -----------
 You can configure your `project_home` path within `vagrant` machine. This is needed for proper path mapping from `PhpStorm' during debugging (please have a look section below).
 ```
+Vagrant.require_plugin 'vagrant-phpstorm-tunnel'
+
 Vagrant.configure('2') do |config|
+  (...)
   config.phpstorm_tunnel.project_home = '/home/vagrant/fuboo'
 end
 ```
