@@ -9,7 +9,7 @@ module VagrantPhpstormTunnel
       @root_path = @env[:root_path].to_s
       @home_path = '.idea/vagrant'
 
-      Dir.chdir(@home_path)
+      Dir.chdir(@root_path)
     end
 
     def is_intellij
