@@ -7,9 +7,7 @@ module VagrantPhpstormTunnel
       @env = env
       @vm = nil
       @root_path = @env[:root_path].to_s
-      @home_path = '.idea/vagrant'
-
-      Dir.chdir(@root_path)
+      @home_path = @root_path + '/.idea/vagrant'
     end
 
     def is_intellij
@@ -17,7 +15,7 @@ module VagrantPhpstormTunnel
     end
 
     def link_php_to_intellij
-      destination_path = File.join(@root_path, @home_path, 'php')
+      destination_path = File.join(@home_path, 'php')
       source_path = File.expand_path('../../../data/php', __FILE__)
 
       File.link(source_path, destination_path)
@@ -29,7 +27,7 @@ module VagrantPhpstormTunnel
       FileUtils.mkdir_p(@home_path)
 
       if tunnel_options[:project_home]
-        destination_path = File.join(@root_path, @home_path, 'vm_project_dir')
+        destination_path = File.join(@home_path, 'vm_project_dir')
         File.write(destination_path, tunnel_options[:project_home].to_s, mode: 'a')
       end
     end
