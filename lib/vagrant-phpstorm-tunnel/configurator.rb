@@ -8,7 +8,7 @@ module VagrantPhpstormTunnel
       @vm = nil
 
       @root_path = @env[:root_path].to_s
-      @home_path = @root_path + '/.idea/vagrant'
+      @home_path = File.join(@root_path, '.idea/vagrant')
     end
 
     def is_intellij
