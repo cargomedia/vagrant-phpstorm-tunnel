@@ -6,6 +6,7 @@ module VagrantPhpstormTunnel
       @app = app
       @env = env
       @vm = nil
+
       @root_path = @env[:root_path].to_s
       @home_path = @root_path + '/.idea/vagrant'
     end
