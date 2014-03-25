@@ -11,7 +11,7 @@ chdir($projectDirHost);
 // Detect Host IP
 $hostIpFile = $homeDirHost . '/host_ip';
 if (!file_exists($hostIpFile)) {
-	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3 }\'"');
+	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3; exit; }\'"');
 	file_put_contents($hostIpFile, $ip);
 }
 $hostIp = trim(file_get_contents($hostIpFile));
