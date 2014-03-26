@@ -20,6 +20,7 @@ Vagrant.configure('2') do |config|
   config.phpstorm_tunnel.project_home = '/home/vagrant/fuboo'
 end
 ```
+By default the plugin assumes that your project is shared as `/vagrant` in the VM. It will copy PhpStorm's helper-scripts into `.idea/vagrant/tmp/` to make them accessible from within the VM.
 
 PhpStorm
 --------
@@ -38,9 +39,3 @@ You should also export `PHP_IDE_CONFIG` parameter into `VM` environment with the
 export PHP_IDE_CONFIG='serverName=www.fuboo.dev'
 ```
 This is recommended to append above line to `~/.profile` file of your `VM`
-
-
-Limitations
------------
-The plugin assumes your project is shared as `/vagrant` in the VM.
-It will copy PhpStorm's helper-scripts into `.idea/vagrant/tmp/` to make them accessible from within the VM.
