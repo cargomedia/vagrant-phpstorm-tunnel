@@ -14,12 +14,15 @@ vagrant plugin install vagrant-phpstorm-tunnel
 Vagrantfile
 -----------
 You can configure your `project_home` path within `vagrant` machine. This is needed for proper paths mapping from `PhpStorm` during debugging (please have a look also section below).
+Also you can configure prefix for each command executed into VM. For example you can prefix command with extra `sudo` permissions like in example below.
 ```ruby
 Vagrant.configure('2') do |config|
   (...)
   config.phpstorm_tunnel.project_home = '/home/vagrant/fuboo'
+  config.phpstorm_tunnel.command_prefix = 'sudo'
 end
 ```
+
 By default the plugin assumes that your project is shared as `/vagrant` in the VM. It will copy PhpStorm's helper-scripts into `.idea/vagrant/tmp/` to make them accessible from within the VM.
 
 PhpStorm
