@@ -5,6 +5,7 @@ $projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
 $projectDirGuest = '/vagrant';
 $homeDirHost = $projectDirHost . '/.idea/vagrant';
 $pipe = 'vagrant ssh -c ';
+$commandPrefix = '';
 
 chdir($projectDirHost);
 
@@ -25,6 +26,12 @@ if (file_exists($projectDirGuestFile)) {
   $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
 }
 $homeDirGuest = $projectDirGuest . '/.idea/vagrant';
+
+// Detect Command Prefix
+$commandPrefixFile = $homeDirHost . '/vm_command_prefix';
+if (file_exists($commandPrefixFile)) {
+  $commandPrefix = trim(file_get_contents($commandPrefixFile));
+}
 
 $arguments = $argv;
 array_shift($arguments);
@@ -61,4 +68,4 @@ if (isset($_SERVER['XDEBUG_CONFIG'])) {
 $includePaths = array('.', $projectDirGuest . '/vendor/phpunit/phpunit');
 $arguments = array_merge(array('-d', 'include_path=' . implode(':', $includePaths)), $arguments);
 
-passthru($pipe . '"' . $env . ' php ' . implode(' ', $arguments) . '"');
+passthru($pipe . '"' .$commandPrefix. ' ' . $env . ' php ' . implode(' ', $arguments) . '"');
