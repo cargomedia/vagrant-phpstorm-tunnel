@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'vagrant-phpstorm-tunnel'
-  s.version     = '0.1.6'
+  s.version     = '0.1.7'
   s.summary     = 'Proxy php-calls from PhpStorm to Vagrant'
   s.description = 'Installs a proxy php binary which can be configured as a php-interpreter in PhpStorm'
   s.authors     = ['Cargo Media', 'kris-lab', 'njam']
