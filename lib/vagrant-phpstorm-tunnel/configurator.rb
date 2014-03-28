@@ -31,6 +31,11 @@ module VagrantPhpstormTunnel
         destination_path = File.join(@home_path, 'vm_project_dir')
         File.write(destination_path, tunnel_options[:project_home].to_s, mode: 'a')
       end
+
+      if tunnel_options[:command_prefix]
+        destination_path = File.join(@home_path, 'vm_command_prefix')
+        File.write(destination_path, tunnel_options[:command_prefix].to_s, mode: 'a')
+      end
     end
 
     def tunnel_options
