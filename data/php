@@ -42,13 +42,13 @@ foreach ($arguments as $index => &$argument) {
 	// Paths mapping
 	$filePath = $argument;
 	if (strrpos($filePath, '.coverage') == strlen($filePath) - 9) {
-        // Mapping output files to remote paths, link files
-        if(!is_dir($homeDirHost . '/output/')) {
-            mkdir($homeDirHost . '/output/', 0777, true);
-        }
-        file_put_contents($filePath, '');
-        symlink($filePath, $homeDirHost . '/output/' . basename($filePath));
-        $arguments[$index] = $homeDirGuest . '/output/' . basename($filePath);
+		// Mapping output files to remote paths, link files
+		if(!is_dir($homeDirHost . '/output/')) {
+			mkdir($homeDirHost . '/output/', 0777, true);
+		}
+		file_put_contents($filePath, '');
+		symlink($filePath, $homeDirHost . '/output/' . basename($filePath));
+		$arguments[$index] = $homeDirGuest . '/output/' . basename($filePath);
 	} elseif (file_exists($filePath)) {
 		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
