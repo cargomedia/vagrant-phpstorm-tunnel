@@ -33,6 +33,8 @@ if (file_exists($commandPrefixFile)) {
   $commandPrefix = trim(file_get_contents($commandPrefixFile));
 }
 
+$coverageFileList = array();
+
 $arguments = $argv;
 array_shift($arguments);
 foreach ($arguments as $index => &$argument) {
@@ -49,6 +51,7 @@ foreach ($arguments as $index => &$argument) {
 		@unlink($filePath);
 		symlink($homeDirHost . '/output/' . basename($filePath), $filePath);
 		$argument = $homeDirGuest . '/output/' . basename($filePath);
+		$coverageFileList[] = $homeDirHost . '/output/' . basename($filePath);
 	} elseif (file_exists($filePath)) {
 		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
@@ -76,3 +79,11 @@ $includePaths = array('.', $projectDirGuest . '/vendor/phpunit/phpunit');
 $arguments = array_merge(array('-d', 'include_path=' . implode(':', $includePaths)), $arguments);
 
 passthru($pipe . escapeshellarg($commandPrefix. ' ' . $env . ' php ' . implode(' ', $arguments)));
+
+foreach($coverageFileList as $filePath) {
+	if (file_exists($filePath)) {
+		$contents = file_get_contents($filePath);
+		$contents = str_replace($projectDirGuest, $projectDirHost, $contents);
+		file_put_contents($filePath, $contents);
+	}
+}
