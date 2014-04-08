@@ -81,7 +81,7 @@ passthru($pipe . escapeshellarg($commandPrefix. ' ' . $env . ' php ' . implode('
 // Copy output files to their location, adapt paths
 foreach($coverageFileList as $filePath => $hostPath) {
 	if (!file_exists($hostPath)) {
-	    @unlink($filePath);
+		@unlink($filePath);
 	} else {
 		$contents = file_get_contents($hostPath);
 		$contents = str_replace($projectDirGuest, $projectDirHost, $contents);
