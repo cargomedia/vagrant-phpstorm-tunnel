@@ -44,14 +44,12 @@ foreach ($arguments as $index => &$argument) {
 	// Paths mapping
 	$filePath = $argument;
 	if (strrpos($filePath, '.coverage') == strlen($filePath) - 9) {
-		// Mapping output files to remote paths, link files
+		// Mapping output files to remote paths
 		if(!is_dir($homeDirHost . '/output/')) {
 			mkdir($homeDirHost . '/output/', 0777, true);
 		}
-		@unlink($filePath);
-		symlink($homeDirHost . '/output/' . basename($filePath), $filePath);
 		$argument = $homeDirGuest . '/output/' . basename($filePath);
-		$coverageFileList[] = $homeDirHost . '/output/' . basename($filePath);
+		$coverageFileList[$filePath] = $homeDirHost . '/output/' . basename($filePath);
 	} elseif (file_exists($filePath)) {
 		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
@@ -80,9 +78,12 @@ $arguments = array_merge(array('-d', 'include_path=' . implode(':', $includePath
 
 passthru($pipe . escapeshellarg($commandPrefix. ' ' . $env . ' php ' . implode(' ', $arguments)));
 
-foreach($coverageFileList as $filePath) {
-	if (file_exists($filePath)) {
-		$contents = file_get_contents($filePath);
+// Copy output files to their location, adapt paths
+foreach($coverageFileList as $filePath => $hostPath) {
+	if (!file_exists($hostPath)) {
+	    @unlink($filePath);
+	} else {
+		$contents = file_get_contents($hostPath);
 		$contents = str_replace($projectDirGuest, $projectDirHost, $contents);
 		file_put_contents($filePath, $contents);
 	}
