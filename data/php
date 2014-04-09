@@ -53,7 +53,7 @@ foreach ($arguments as $index => &$argument) {
 	} elseif (file_exists($filePath)) {
 		if (strpos($filePath, $projectDirHost) !== false) {
 			// Mapping project paths to remote paths
-			$arguments[$index] = str_replace($projectDirHost, $projectDirGuest, $filePath);
+			$argument = str_replace($projectDirHost, $projectDirGuest, $filePath);
 		} else {
 			// Mapping any other local system paths to remote paths, upload files
 			if(!is_dir($homeDirHost . '/scripts/')) {
