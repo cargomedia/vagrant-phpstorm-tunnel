@@ -29,9 +29,7 @@ function applyMapping($argument) {
                 mkdir($homeDirHost . '/scripts/', 0777, true);
             }
             if (!is_dir($filePath)) {
-                //                if (!preg_match('/ide-phpunit\.php/', $filePath)) {
                 copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
-                //                }
             }
             $argument = $homeDirGuest . '/scripts/' . basename($filePath);
         }
