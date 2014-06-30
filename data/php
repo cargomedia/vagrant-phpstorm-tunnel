@@ -1,12 +1,33 @@
 #!/usr/bin/env php
 <?php
 
-function applyMapping($argument) {
-    global $projectDirHost;
-    global $projectDirGuest;
-    global $homeDirHost;
-    global $homeDirGuest;
-    global $hostIp;
+$projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
+$projectDirGuest = '/vagrant';
+$homeDirHost = $projectDirHost . '/.idea/vagrant';
+$pipe = 'vagrant ssh -c ';
+$commandPrefix = '';
+
+chdir($projectDirHost);
+
+// Detect Host IP
+$hostIpFile = $homeDirHost . '/host_ip';
+if (!file_exists($hostIpFile)) {
+    $ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3; exit; }\'"');
+    file_put_contents($hostIpFile, $ip);
+}
+$hostIp = trim(file_get_contents($hostIpFile));
+if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
+    throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
+}
+
+// Detect Project Dir on Guest
+$projectDirGuestFile = $homeDirHost . '/vm_project_dir';
+if (file_exists($projectDirGuestFile)) {
+    $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
+}
+$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
+
+$applyMapping = function ($argument) use ($projectDirHost, $projectDirGuest, $homeDirHost, $homeDirGuest, $hostIp) {
     // IP mapping
     $argument = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $argument);
 
@@ -36,37 +57,7 @@ function applyMapping($argument) {
     }
 
     return escapeshellarg($argument);
-}
-
-global $projectDirHost;
-$projectDirHost = dirname(dirname(dirname($_SERVER['PHP_SELF'])));
-global $projectDirGuest;
-$projectDirGuest = '/vagrant';
-global $homeDirHost;
-$homeDirHost = $projectDirHost . '/.idea/vagrant';
-global $hostIp;
-$pipe = 'vagrant ssh -c ';
-$commandPrefix = '';
-
-chdir($projectDirHost);
-
-// Detect Host IP
-$hostIpFile = $homeDirHost . '/host_ip';
-if (!file_exists($hostIpFile)) {
-    $ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3; exit; }\'"');
-    file_put_contents($hostIpFile, $ip);
-}
-$hostIp = trim(file_get_contents($hostIpFile));
-if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
-    throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
-}
-
-// Detect Project Dir on Guest
-$projectDirGuestFile = $homeDirHost . '/vm_project_dir';
-if (file_exists($projectDirGuestFile)) {
-    $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
-}
-$homeDirGuest = $projectDirGuest . '/.idea/vagrant';
+};
 
 // Detect Command Prefix
 $commandPrefixFile = $homeDirHost . '/vm_command_prefix';
@@ -79,7 +70,7 @@ $coverageFileList = array();
 $arguments = $argv;
 array_shift($arguments);
 foreach ($arguments as $index => &$argument) {
-    $argument = applyMapping($argument);
+    $argument = $applyMapping($argument);
 }
 
 $allowedEnv = array('XDEBUG_CONFIG', 'IDE_PHPUNIT_CUSTOM_LOADER', 'IDE_PHPUNIT_PHPUNIT_PHAR', 'IDE_PHPUNIT_PHPUNIT_INCLUDE');
@@ -87,7 +78,7 @@ $allowedEnv = array('XDEBUG_CONFIG', 'IDE_PHPUNIT_CUSTOM_LOADER', 'IDE_PHPUNIT_P
 $env =  array();
 foreach ($_SERVER as $name => $value) {
     if (in_array($name, $allowedEnv)) {
-        $env[] = $name . '=' . applyMapping($value);
+        $env[] = $name . '=' . $applyMapping($value);
     }
 }
 
