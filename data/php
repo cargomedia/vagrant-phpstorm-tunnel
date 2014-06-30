@@ -73,8 +73,8 @@ foreach ($arguments as $index => &$argument) {
     $argument = $applyMapping($argument);
 }
 
-$allowedEnv = array('XDEBUG_CONFIG', 'IDE_PHPUNIT_CUSTOM_LOADER', 'IDE_PHPUNIT_PHPUNIT_PHAR', 'IDE_PHPUNIT_PHPUNIT_INCLUDE');
 // Get allowed environment variables
+$allowedEnv = array('XDEBUG_CONFIG', 'IDE_PHPUNIT_CUSTOM_LOADER', 'IDE_PHPUNIT_PHPUNIT_PHAR', 'IDE_PHPUNIT_PHPUNIT_INCLUDE');
 $env =  array();
 foreach ($_SERVER as $name => $value) {
     if (in_array($name, $allowedEnv)) {
