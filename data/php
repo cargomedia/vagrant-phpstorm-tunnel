@@ -12,25 +12,57 @@ chdir($projectDirHost);
 // Detect Host IP
 $hostIpFile = $homeDirHost . '/host_ip';
 if (!file_exists($hostIpFile)) {
-	$ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3; exit; }\'"');
-	file_put_contents($hostIpFile, $ip);
+    $ip = shell_exec('vagrant ssh -c "sudo ip route | awk \'/default/ { print \$3; exit; }\'"');
+    file_put_contents($hostIpFile, $ip);
 }
 $hostIp = trim(file_get_contents($hostIpFile));
 if (!filter_var($hostIp, FILTER_VALIDATE_IP)) {
-	throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
+    throw new Exception('Cannot detect host IP, got value `' . $hostIp . '`.');
 }
 
 // Detect Project Dir on Guest
 $projectDirGuestFile = $homeDirHost . '/vm_project_dir';
 if (file_exists($projectDirGuestFile)) {
-  $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
+    $projectDirGuest = trim(file_get_contents($projectDirGuestFile));
 }
 $homeDirGuest = $projectDirGuest . '/.idea/vagrant';
+
+$applyMapping = function ($argument) use ($projectDirHost, $projectDirGuest, $homeDirHost, $homeDirGuest, $hostIp) {
+    // IP mapping
+    $argument = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $argument);
+
+    // Paths mapping
+    $filePath = $argument;
+    if (strrpos($filePath, '.coverage') == strlen($filePath) - 9) {
+        // Mapping output files to remote paths
+        if (!is_dir($homeDirHost . '/output/')) {
+            mkdir($homeDirHost . '/output/', 0777, true);
+        }
+        $argument = $homeDirGuest . '/output/' . basename($filePath);
+        $coverageFileList[$filePath] = $homeDirHost . '/output/' . basename($filePath);
+    } elseif (file_exists($filePath)) {
+        if (strpos($filePath, $projectDirHost) !== false) {
+            // Mapping project paths to remote paths
+            $argument = str_replace($projectDirHost, $projectDirGuest, $filePath);
+        } else {
+            // Mapping any other local system paths to remote paths, upload files
+            if (!is_dir($homeDirHost . '/scripts/')) {
+                mkdir($homeDirHost . '/scripts/', 0777, true);
+            }
+            if (is_file($filePath)) {
+                copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
+            }
+            $argument = $homeDirGuest . '/scripts/' . basename($filePath);
+        }
+    }
+
+    return escapeshellarg($argument);
+};
 
 // Detect Command Prefix
 $commandPrefixFile = $homeDirHost . '/vm_command_prefix';
 if (file_exists($commandPrefixFile)) {
-  $commandPrefix = trim(file_get_contents($commandPrefixFile));
+    $commandPrefix = trim(file_get_contents($commandPrefixFile));
 }
 
 $coverageFileList = array();
@@ -38,53 +70,30 @@ $coverageFileList = array();
 $arguments = $argv;
 array_shift($arguments);
 foreach ($arguments as $index => &$argument) {
-	// IP mapping
-	$argument = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $argument);
-
-	// Paths mapping
-	$filePath = $argument;
-	if (strrpos($filePath, '.coverage') == strlen($filePath) - 9) {
-		// Mapping output files to remote paths
-		if(!is_dir($homeDirHost . '/output/')) {
-			mkdir($homeDirHost . '/output/', 0777, true);
-		}
-		$argument = $homeDirGuest . '/output/' . basename($filePath);
-		$coverageFileList[$filePath] = $homeDirHost . '/output/' . basename($filePath);
-	} elseif (file_exists($filePath)) {
-		if (strpos($filePath, $projectDirHost) !== false) {
-			// Mapping project paths to remote paths
-			$argument = str_replace($projectDirHost, $projectDirGuest, $filePath);
-		} else {
-			// Mapping any other local system paths to remote paths, upload files
-			if(!is_dir($homeDirHost . '/scripts/')) {
-				mkdir($homeDirHost . '/scripts/', 0777, true);
-			}
-			copy($filePath, $homeDirHost . '/scripts/' . basename($filePath));
-			$argument = $homeDirGuest . '/scripts/' . basename($filePath);
-		}
-	}
-
-	$argument = escapeshellarg($argument);
+    $argument = $applyMapping($argument);
 }
 
-// Get XDEBUG environment variable
-$env = '';
-if (isset($_SERVER['XDEBUG_CONFIG'])) {
-	$env = "XDEBUG_CONFIG='" . $_SERVER['XDEBUG_CONFIG'] . "'";
+// Get allowed environment variables
+$allowedEnv = array('XDEBUG_CONFIG', 'IDE_PHPUNIT_CUSTOM_LOADER', 'IDE_PHPUNIT_PHPUNIT_PHAR', 'IDE_PHPUNIT_PHPUNIT_INCLUDE');
+$env =  array();
+foreach ($_SERVER as $name => $value) {
+    if (in_array($name, $allowedEnv)) {
+        $env[] = $name . '=' . $applyMapping($value);
+    }
 }
 
 $includePaths = array('.', $projectDirGuest . '/vendor/phpunit/phpunit');
 $arguments = array_merge(array('-d', 'include_path=' . implode(':', $includePaths)), $arguments);
 
-passthru($pipe . escapeshellarg($commandPrefix. ' ' . $env . ' php ' . implode(' ', $arguments)));
+passthru($pipe . escapeshellarg($commandPrefix. ' ' . implode(' ', $env) . ' php ' . implode(' ', $arguments)));
 
 // Copy output files to their location, adapt paths
-foreach($coverageFileList as $filePath => $hostPath) {
-	if (!file_exists($hostPath)) {
-		@unlink($filePath);
-	} else {
-		$contents = file_get_contents($hostPath);
-		$contents = str_replace($projectDirGuest, $projectDirHost, $contents);
-		file_put_contents($filePath, $contents);
-	}
+foreach ($coverageFileList as $filePath => $hostPath) {
+    if (!file_exists($hostPath)) {
+        @unlink($filePath);
+    } else {
+        $contents = file_get_contents($hostPath);
+        $contents = str_replace($projectDirGuest, $projectDirHost, $contents);
+        file_put_contents($filePath, $contents);
+    }
 }
