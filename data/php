@@ -27,7 +27,7 @@ if (file_exists($projectDirGuestFile)) {
 }
 $homeDirGuest = $projectDirGuest . '/.idea/vagrant';
 
-$applyMapping = function ($argument) use ($projectDirHost, $projectDirGuest, $homeDirHost, $homeDirGuest, $hostIp) {
+$applyMapping = function ($argument) use ($projectDirHost, $projectDirGuest, $homeDirHost, $homeDirGuest, $hostIp, &$coverageFileList) {
     // IP mapping
     $argument = str_replace(array('127.0.0.1', 'localhost'), $hostIp, $argument);
 
