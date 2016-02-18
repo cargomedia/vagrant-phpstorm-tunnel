@@ -19,7 +19,7 @@ module VagrantPhpstormTunnel
       destination_path = File.join(@home_path, 'php')
       source_path = File.expand_path('../../../data/php', __FILE__)
 
-      File.link(source_path, destination_path)
+      File.symlink(source_path, destination_path)
       File.chmod(0755, destination_path)
     end
 
