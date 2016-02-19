@@ -3,6 +3,8 @@ vagrant-phpstorm-tunnel
 `vagrant-phpstorm-tunnel` installs a proxy php binary which can be configured as a php-interpreter in [PhpStorm](http://www.jetbrains.com/phpstorm/).
 It will forward all php calls to `php` in the [Vagrant](http://www.vagrantup.com/) VM.
 
+[![Gem Version](https://img.shields.io/gem/v/vagrant-phpstorm-tunnel.svg)](https://rubygems.org/gems/vagrant-phpstorm-tunnel)
+
 This is a workaround for a missing feature in PhpStorm (see http://youtrack.jetbrains.com/issue/WI-19485).
 
 Installation
