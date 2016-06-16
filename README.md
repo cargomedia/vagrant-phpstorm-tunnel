@@ -1,3 +1,8 @@
+DEPRECATED
+==========
+
+This project is deprecated as the functionality is now available in PhpStorm with [remote interpreters](https://confluence.jetbrains.com/display/PhpStorm/Working+with+Remote+PHP+Interpreters+in+PhpStorm).
+
 vagrant-phpstorm-tunnel
 =======================
 `vagrant-phpstorm-tunnel` installs a proxy php binary which can be configured as a php-interpreter in [PhpStorm](http://www.jetbrains.com/phpstorm/).
